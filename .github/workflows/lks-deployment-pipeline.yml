@@ -10,17 +10,17 @@ on:
      - main
 
 env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: lks-gatus
-  ECS_CLUSTER: lks-osscluster
+  AWS_REGION: "us-east-1"
+  ECR_REPOSITORY: "lks-gatus"
+  ECS_CLUSTER: "lks-osscluster"
   TOKEN: ${{ secrets.TOKEN }}
 
-  ECS_GATUS_SERVICE: gatus-service
-  GATUS_TASK_DEFINITION: gatus/task-definition.json
+  ECS_GATUS_SERVICE: "gatus-service"
+  GATUS_TASK_DEFINITION: "gatus/task-definition.json"
   GATUS_URL: "http://${{ secrets.ALB_ENDPOINT }}:8080"
 
-  ECS_LEANTIME_SERVICE: leantime-service
-  LEANITME_TASK_DEFINITION: leantime/task-definition.json
+  ECS_LEANTIME_SERVICE: "leantime-service"
+  LEANTIME_TASK_DEFINITION: "leantime/task-definition.json"
   LEANTIME_URL: "http://${{ secrets.ALB_ENDPOINT }}/auth/login"
 # FILL THE MISSING VALUES ABOVE
 
