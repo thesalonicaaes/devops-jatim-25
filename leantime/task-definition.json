@@ -94,9 +94,6 @@
           "valueFrom": "/lks/db/username"
         }
       ],
-      "systemControls": [],
-      "ulimits": [],
-      "volumesFrom": []
     }
   ],
       "environment": [],
