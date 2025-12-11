@@ -21,10 +21,7 @@
       "image": "<task-def-image>",
       "cpu": 0,
       "essential": true,
-      "volumesFrom": [],
-      "systemControls": [],
 
-      "portMappings": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {

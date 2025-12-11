@@ -109,6 +109,4 @@
           "awslogs-stream-prefix": "ecs"
         }
       }
-    }
-  ]
 }
