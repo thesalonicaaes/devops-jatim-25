@@ -1,112 +1,156 @@
 {
-  // FILL IN THE MISSING VALUES BELOW
-  "family": "lks-leantime-task",
-  "taskRoleArn": "arn:aws:iam::203328187809:role/LabRole",
-  "executionRoleArn": "arn:aws:iam::203328187809:role/LabRole",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": "FARGATE",
-  "cpu": "1024",
-  "memory": "3072",
-  "volumes": [
-    {
-      "efsVolumeConfiguration": {
-        "authorizationConfig": {
-          "accessPointId": "fsap-0d04dea2a261da936",
-          "iam": "ENABLED"
+    "compatibilities": [
+        "EC2",
+        "FARGATE",
+        "MANAGED_INSTANCES"
+    ],
+    "containerDefinitions": [
+        {
+            "cpu": 0,
+            "environment": [],
+            "environmentFiles": [],
+            "essential": true,
+            "image": "leantime/leantime:latest",
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/lks-leantime-task",
+                    "awslogs-create-group": "true",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "ecs"
+                },
+                "secretOptions": []
+            },
+            "mountPoints": [],
+            "name": "leantime",
+            "portMappings": [
+                {
+                    "appProtocol": "http",
+                    "containerPort": 8080,
+                    "hostPort": 8080,
+                    "name": "leantime-8080-tcp",
+                    "protocol": "tcp"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "LEAN_DB_DATABASE",
+                    "valueFrom": "/lks/db/name"
+                },
+                {
+                    "name": "LEAN_DB_HOST",
+                    "valueFrom": "/lks/db/host"
+                },
+                {
+                    "name": "LEAN_DB_PASSWORD",
+                    "valueFrom": "/lks/db/password"
+                },
+                {
+                    "name": "LEAN_DB_PORT",
+                    "valueFrom": "/lks/db/port"
+                },
+                {
+                    "name": "LEAN_DB_USER",
+                    "valueFrom": "/lks/db/username"
+                }
+            ],
+            "systemControls": [],
+            "ulimits": [],
+            "volumesFrom": []
+        }
+    ],
+    "cpu": "1024",
+    "enableFaultInjection": false,
+    "executionRoleArn": "arn:aws:iam::203328187809:role/LabRole",
+    "family": "lks-leantime-task",
+    "memory": "3072",
+    "networkMode": "awsvpc",
+    "placementConstraints": [],
+    "registeredAt": "2025-12-11T06:49:12.671Z",
+    "registeredBy": "arn:aws:sts::203328187809:assumed-role/voclabs/user4612233=137005-26",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
         },
-        "fileSystemId": "fs-0296e0e275e130cf3",
-        "rootDirectory": "/",
-        "transitEncryption": "ENABLED"
-      },
-      "name": "vol-public_userfile"
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "ecs.capability.efsAuth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "ecs.capability.efs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.25"
+        },
+        {
+            "name": "ecs.capability.secrets.ssm.environment-variables"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "revision": 2,
+    "runtimePlatform": {
+        "cpuArchitecture": "X86_64",
+        "operatingSystemFamily": "LINUX"
     },
-    {
-      "efsVolumeConfiguration": {
-        "authorizationConfig": {
-          "accessPointId": "fsap-0585acf0631253601",
-          "iam": "ENABLED"
-        },
-        "fileSystemId": "fs-0296e0e275e130cf3",
-        "rootDirectory": "/",
-        "transitEncryption": "ENABLED"
-      },
-      "name": "vol-userfile"
-    },
-    {
-      "efsVolumeConfiguration": {
-        "authorizationConfig": {
-          "accessPointId": "fsap-063a8eb701fdc5c33",
-          "iam": "ENABLED"
-        },
-        "fileSystemId": "fs-0296e0e275e130cf3",
-        "rootDirectory": "/",
-        "transitEncryption": "ENABLED"
-      },
-      "name": "vol-plugins"
-    }
-  ],
-
-
-  "placementConstraints": [],
-  "runtimePlatform": {
-    "cpuArchitecture": "X86_64",
-    "operatingSystemFamily": "LINUX"
-  },
-  "enableFaultInjection": false,
-
-  "containerDefinitions": [
-    {
-      "name": "leantime",
-      "image": "leantime/leantime:latest",
-      "cpu": 0,
-      "essential": true,
-      "volumesFrom": [],
-      "systemControls": [],
-
-      "portMappings": [
+    "status": "ACTIVE",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203328187809:task-definition/lks-leantime-task:2",
+    "taskRoleArn": "arn:aws:iam::203328187809:role/LabRole",
+    "volumes": [
         {
-          "appProtocol": "http",
-          "containerPort": 8080,
-          "hostPort": 8080,
-          "name": "leantime-8080-tcp",
-          "protocol": "tcp"
+            "efsVolumeConfiguration": {
+                "authorizationConfig": {
+                    "accessPointId": "fsap-0d04dea2a261da936",
+                    "iam": "ENABLED"
+                },
+                "fileSystemId": "fs-0296e0e275e130cf3",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED"
+            },
+            "name": "vol-public_userfile"
+        },
+        {
+            "efsVolumeConfiguration": {
+                "authorizationConfig": {
+                    "accessPointId": "fsap-0585acf0631253601",
+                    "iam": "ENABLED"
+                },
+                "fileSystemId": "fs-0296e0e275e130cf3",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED"
+            },
+            "name": "vol-userfile"
+        },
+        {
+            "efsVolumeConfiguration": {
+                "authorizationConfig": {
+                    "accessPointId": "fsap-063a8eb701fdc5c33",
+                    "iam": "ENABLED"
+                },
+                "fileSystemId": "fs-0296e0e275e130cf3",
+                "rootDirectory": "/",
+                "transitEncryption": "ENABLED"
+            },
+            "name": "vol-plugins"
         }
-      ],
-      "secrets": [
-        {
-          "name": "LEAN_DB_DATABASE",
-          "valueFrom": "/lks/db/name"
-        },
-        {
-          "name": "LEAN_DB_HOST",
-          "valueFrom": "/lks/db/host"
-        },
-        {
-          "name": "LEAN_DB_PASSWORD",
-          "valueFrom": "/lks/db/password"
-        },
-        {
-          "name": "LEAN_DB_PORT",
-          "valueFrom": "/lks/db/port"
-        },
-        {
-          "name": "LEAN_DB_USER",
-          "valueFrom": "/lks/db/username"
-        }
-      ],
-    }
-  ],
-      "environment": [],
-      "mountPoints": [],
-      "logConfiguration": {
-        "logDriver": "awslogs",
-        "options": {
-          "awslogs-group": "/ecs/lks-leantime-task",
-          "awslogs-region": "us-east-1",
-          "mode": "non-blocking",
-          "awslogs-create-group": "true",
-          "max-buffer-size": "25m",
-          "awslogs-stream-prefix": "ecs"
-        }
-      }
+    ],
+    "tags": []
 }
