@@ -1,4 +1,4 @@
-# FILL IN THE MISSING VALUES BELOW
+
 alerting:
   ???:
     token: "<github-token>" # WARN: DO NOT CHANGE THIS LINE
@@ -8,17 +8,26 @@ alerting:
 endpoints:
   - name: Leantime
     url: <leantime-url> # WARN: DO NOT CHANGE THIS LINE
-    interval:
+    interval: 60s
     conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 300"
     alerts:
-      - type: ???
+      - type: github
+        failure-threshold: 3
+        success-threshold: 5
+        send-on-resolved: true
         description: "Sensei, Leantime is down! Please check and fix it."
 
   - name: Gatus
     url: <gatus-url> # WARN: DO NOT CHANGE THIS LINE
-    interval:
+    interval: 60s
     conditions:
+      - "[STATUS] == 200"
+      - "[RESPONSE_TIME] < 500"
     alerts:
-      - type: ???
+      - type: github
+        failure-threshold: 3
+        success-threshold: 5
+        send-on-resolved: true
         description: "Sensei, Gatus is down! Please check and fix it."
-# FILL IN THE MISSING VALUES BELOW

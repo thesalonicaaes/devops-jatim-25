@@ -1,0 +1,113 @@
+name: updated
+
+on:
+  push:
+    path:
+      - gatus/*
+      - leantime/*
+      - .github/workflows/lks-deployment-pipeline.yml
+    branches:
+     - main
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: lks-gatus
+  ECS_CLUSTER: lks-osscluster
+  TOKEN: ${{ secrets.TOKEN }}
+
+  ECS_GATUS_SERVICE: gatus-service
+  GATUS_TASK_DEFINITION: gatus/task-definition.json
+  GATUS_URL: "http://${{ secrets.ALB_ENDPOINT }}:8080"
+
+  ECS_LEANTIME_SERVICE: leantime-service
+  LEANITME_TASK_DEFINITION: leantime/task-definition.json
+  LEANTIME_URL: "http://${{ secrets.ALB_ENDPOINT }}/auth/login"
+# FILL THE MISSING VALUES ABOVE
+
+permissions:
+  contents: read
+
+jobs:
+
+  deploygatus:
+    name: Deploy Gatus App
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Update Configuration
+        run: |
+          sed -i "s|<github-token>|$TOKEN|g" gatus/config/config.yaml
+          sed -i "s|<leantime-url>|$LEANTIME_URL|g" gatus/config/config.yaml
+          sed -i "s|<gatus-url>|$GATUS_URL|g" gatus/config/config.yaml
+          echo "Cofiguration updated."
+          cat gatus/config/config.yaml
+
+      - name: Get Short Commit Hash
+        run: echo "IMAGE_TAG=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG gatus
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push --all-tags $ECR_REGISTRY/$ECR_REPOSITORY
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+          echo "IMAGE_FULL_URI=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
+
+      - name: Update ECS task definition
+        run: |
+          sed -i "s|<task-def-image>|$IMAGE_FULL_URI|g" $GATUS_TASK_DEFINITION
+          echo "Task definition updated."
+          cat $GATUS_TASK_DEFINITION
+
+      - name: deploy ecs task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ env.gatus_task_definition }}
+          service: ${{ env.ecs_gatus_service }}
+          cluster: ${{ env.ecs_cluster }}
+          force-new-deployment: true
+          run-task-tags: '[{"key": "", "value": ""} , ...]'
+
+  deployleantime:
+    name: Deploy Leantime App
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ env.LEANTIME_TASK_DEFINITION }}
+          service: ${{ env.ECS_LEANTIME_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          force-new-deployment: true
+          run-task-tags: '[{"key": "", "value": ""} , ...]'
