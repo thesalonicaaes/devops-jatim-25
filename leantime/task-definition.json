@@ -1,8 +1,8 @@
 {
     "compatibilities": [
         "EC2",
-        "FARGATE",
-        "MANAGED_INSTANCES"
+        "MANAGED_INSTANCES",
+        "FARGATE"
     ],
     "containerDefinitions": [
         {
@@ -14,14 +14,30 @@
             "logConfiguration": {
                 "logDriver": "awslogs",
                 "options": {
-                    "awslogs-group": "/ecs/lks-leantime-task",
+                    "awslogs-group": "/ecs/lks/leantime-app",
                     "awslogs-create-group": "true",
                     "awslogs-region": "us-east-1",
                     "awslogs-stream-prefix": "ecs"
                 },
                 "secretOptions": []
             },
-            "mountPoints": [],
+            "mountPoints": [
+                {
+                    "containerPath": "/var/www/html/public/userfiles",
+                    "readOnly": false,
+                    "sourceVolume": "public"
+                },
+                {
+                    "containerPath": "/var/www/html/userfiles ",
+                    "readOnly": false,
+                    "sourceVolume": "user"
+                },
+                {
+                    "containerPath": "/var/www/html/app/Plugins ",
+                    "readOnly": false,
+                    "sourceVolume": "pulgins"
+                }
+            ],
             "name": "leantime",
             "portMappings": [
                 {
@@ -34,24 +50,24 @@
             ],
             "secrets": [
                 {
-                    "name": "LEAN_DB_DATABASE",
-                    "valueFrom": "/lks/db/name"
-                },
-                {
                     "name": "LEAN_DB_HOST",
                     "valueFrom": "/lks/db/host"
+                },
+                {
+                    "name": "LEAN_DB_USER",
+                    "valueFrom": "/lks/db/username"
                 },
                 {
                     "name": "LEAN_DB_PASSWORD",
                     "valueFrom": "/lks/db/password"
                 },
                 {
-                    "name": "LEAN_DB_PORT",
-                    "valueFrom": "/lks/db/port"
+                    "name": "LEAN_DB_DATABASE",
+                    "valueFrom": "/lks/db/name"
                 },
                 {
-                    "name": "LEAN_DB_USER",
-                    "valueFrom": "/lks/db/username"
+                    "name": "LEAN_DB_PORT",
+                    "valueFrom": "/lks/db/port"
                 }
             ],
             "systemControls": [],
@@ -63,10 +79,10 @@
     "enableFaultInjection": false,
     "executionRoleArn": "arn:aws:iam::203328187809:role/LabRole",
     "family": "lks-leantime-task",
-    "memory": "3072",
+    "memory": "2048",
     "networkMode": "awsvpc",
     "placementConstraints": [],
-    "registeredAt": "2025-12-11T06:49:12.671Z",
+    "registeredAt": "2025-12-15T02:47:53.908Z",
     "registeredBy": "arn:aws:sts::203328187809:assumed-role/voclabs/user4612233=137005-26",
     "requiresAttributes": [
         {
@@ -106,50 +122,50 @@
     "requiresCompatibilities": [
         "FARGATE"
     ],
-    "revision": 2,
+    "revision": 6,
     "runtimePlatform": {
         "cpuArchitecture": "X86_64",
         "operatingSystemFamily": "LINUX"
     },
     "status": "ACTIVE",
-    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203328187809:task-definition/lks-leantime-task:2",
+    "taskDefinitionArn": "arn:aws:ecs:us-east-1:203328187809:task-definition/lks-leantime-task:6",
     "taskRoleArn": "arn:aws:iam::203328187809:role/LabRole",
     "volumes": [
         {
             "efsVolumeConfiguration": {
                 "authorizationConfig": {
-                    "accessPointId": "fsap-0d04dea2a261da936",
-                    "iam": "ENABLED"
+                    "accessPointId": "fsap-0194d78b51b88475f",
+                    "iam": "DISABLED"
                 },
-                "fileSystemId": "fs-0296e0e275e130cf3",
+                "fileSystemId": "fs-01ffa484beee8bf5b",
                 "rootDirectory": "/",
                 "transitEncryption": "ENABLED"
             },
-            "name": "vol-public_userfile"
+            "name": "public"
         },
         {
             "efsVolumeConfiguration": {
                 "authorizationConfig": {
-                    "accessPointId": "fsap-0585acf0631253601",
-                    "iam": "ENABLED"
+                    "accessPointId": "fsap-06c91c1f5d88a3d02",
+                    "iam": "DISABLED"
                 },
-                "fileSystemId": "fs-0296e0e275e130cf3",
+                "fileSystemId": "fs-01ffa484beee8bf5b",
                 "rootDirectory": "/",
                 "transitEncryption": "ENABLED"
             },
-            "name": "vol-userfile"
+            "name": "user"
         },
         {
             "efsVolumeConfiguration": {
                 "authorizationConfig": {
-                    "accessPointId": "fsap-063a8eb701fdc5c33",
-                    "iam": "ENABLED"
+                    "accessPointId": "fsap-06f1ad69b4c798ddf",
+                    "iam": "DISABLED"
                 },
-                "fileSystemId": "fs-0296e0e275e130cf3",
+                "fileSystemId": "fs-01ffa484beee8bf5b",
                 "rootDirectory": "/",
                 "transitEncryption": "ENABLED"
             },
-            "name": "vol-plugins"
+            "name": "pulgins"
         }
     ],
     "tags": []
